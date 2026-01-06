@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Neural Memory Decay Simulator</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0"></script>
+</head>
+<body>
+
+  <h1>Neural Memory Decay Simulator</h1>
+  <p>AI memorizes and forgets an image (browser-only ML)</p>
+
+  <input type="file" id="imageInput" accept="image/*" />
+
+  <div class="buttons">
+    <button id="trainBtn">Memorize</button>
+    <button id="decayBtn">Forget</button>
+  </div>
+
+  <canvas id="canvas1" width="128" height="128"></canvas>
+  <canvas id="canvas" width="128" height="128"></canvas>
+  <script src="script.js"></script>
+  <p id="epochDisplay">Epoch: 0</p>
+</body>
+</html>
