@@ -5,9 +5,42 @@ const ctx1 = canvas1.getContext("2d");
 const SIZE = 128; // 🔥 lower resolution = fast render
 let model = null;
 let imageData = null;
+let lossChart = null;
+let epochLabels = [];
+let lossValues = [];
 
 /* ================= IMAGE LOAD ================= */
 
+
+function initChart() {
+  const ctxChart = document.getElementById('lossChart').getContext('2d');
+  lossChart = new Chart(ctxChart, {
+    type: 'line',
+    data: {
+      labels: epochLabels,
+      datasets: [
+        {
+          label: 'Loss',
+          data: lossValues,
+          borderColor: 'rgba(255,99,132,1)',
+          backgroundColor: 'rgba(255,99,132,0.2)',
+          fill: true,
+          tension: 0.2,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: true }
+      },
+      scales: {
+        x: { title: { display: true, text: 'Epoch' } },
+        y: { title: { display: true, text: 'Loss' }, beginAtZero: true }
+      }
+    }
+  });
+}
 document.getElementById("imageInput").addEventListener("change", e => {
   const img = new Image();
   img.onload = () => {
@@ -74,13 +107,32 @@ document.getElementById("trainBtn").addEventListener("click", async () => {
   const totalEpochs = 100;
   document.getElementById("epochDisplay").innerText = "Epoch: 0";
 
+  // reset chart data
+  epochLabels = [];
+  lossValues = [];
+  if (typeof Chart !== "undefined") {
+    if (!lossChart) initChart();
+    lossChart.data.labels = epochLabels;
+    lossChart.data.datasets[0].data = lossValues;
+    lossChart.update();
+  }
+
   await model.fit(data.x, data.y, {
     epochs: totalEpochs,
     batchSize: 1024,
     callbacks: {
-      onEpochEnd: async (epoch) => {
+      onEpochEnd: async (epoch, logs) => {
+        const e = epoch + 1;
         document.getElementById("epochDisplay").innerText =
-          `Epoch: ${epoch + 1} / ${totalEpochs}`;
+          `Epoch: ${e} / ${totalEpochs}`;
+
+        if (logs && logs.loss != null) {
+          epochLabels.push(e);
+          lossValues.push(logs.loss);
+          if (lossChart) {
+            lossChart.update();
+          }
+        }
 
         await renderImage();
       }

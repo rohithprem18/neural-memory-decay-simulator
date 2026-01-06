@@ -38,3 +38,13 @@ canvas {
   border: 1px solid #444;
   margin-top: 5px;
 }
+
+#lossChart {
+  max-width: 720px;
+  width: 90%;
+  height: 240px;
+  display: block;
+  margin: 18px auto;
+  background: #0b0b0b;
+  border: 1px solid #333;
+}
